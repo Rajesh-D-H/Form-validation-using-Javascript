@@ -1,0 +1,103 @@
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+});
+
+con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    con.query("create database mydb", function (err, result) {
+        if (err) throw err;
+        console.log("database created");
+    });
+});
+
+var con = mysql.createConnection({
+    host: "127.0.0.1",
+    user: "root",
+    password: "",
+    database: "mydb"
+});
+app.get('/send', function (req, res) {
+    var rr = "<html>"
+    rr = rr + "<body>"
+    rr = rr + "<form action='thank' method='post'>"
+    rr = rr + "roll number" + "<input type ='number' name='one' value=''>"
+    rr = rr + "per" + "<input type='number' name='two' value=''>";
+    rr = rr + "name" + "<input type='text' name='three' value=''>";
+    rr = rr + "<input type='submit' value='send' name='t1'>";
+    rr = rr + "</form>"
+    rr = rr + "</body>"
+    res.send(rr);
+})
+app.post('/thank', urlencodedparser, function (req, res) {
+    var roll = req.body.one;
+    var per = req.body.two;
+    var name = req.body.three;
+    var reply = '';
+    var mysql = "INSERT INTO student (roll, per, name) VALUES (" + roll + "," + per + "," + "'" + name + "')";
+
+    con.connect(function (err) {
+        if (err) throw err;
+        console.log("connected!!");
+
+    })
+
+    con.query(mysql, function (err, result) {
+        if (err) throw err;
+        res.write("rec inserted");
+    });
+
+    res.write("record inserted");
+    res.end();
+}).listen(9000)
+// Route to retrieve form
+app.get('/retrieve', (req, res)=> {
+    let formHtml = `
+        <html>
+        <body>
+            <form action='/data' method='post'>
+                Enter the Roll Number of the student:<br>
+                <input type='text' name='rolln' value=''>
+                <input type='submit' value='Submit'>
+            </form>
+        </body>
+        </html>
+    `;
+    res.send(formHtml);
+});
+
+// Route to handle form submission
+app.post('/data', urlencodedparser, function(req, res) {
+    const roll = req.body.rolln;
+
+    // Use parameterized query to prevent SQL injection
+    const sql = "SELECT * FROM student WHERE roll = ?";
+    con.query(sql, [roll], function(err, results) {
+        if (err) {
+            console.error("Error executing query:", err);
+            res.status(500).send("Database error");
+            return;
+        }
+
+        if (results.length > 0) {
+            const student = results[0];
+            let responseHtml = `
+                <html>
+                <body>
+                    <p>The name of the person: ${student.name}</p>
+                    <p>The roll of the person: ${student.roll}</p>
+                    <p>The percentage of the person: ${student.per}</p>
+                    <a href='/retrieve'>Back to form</a>
+                </body>
+                </html>
+            `;
+            res.send(responseHtml);
+        } else {
+            res.send("<html><body><p>No student found with this roll number.</p> <a href='/retrieve'>Back to form</a> </body></html>");
+        }
+    });
+});
