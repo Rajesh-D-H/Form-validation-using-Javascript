@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation Example</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom Styles for Error Messages */
+        .invalid-feedback {
+            display: block;
+        }
+        .valid-feedback {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center">Form Validation Example</h2>
+    <form id="validationForm" novalidate>
+        <!-- Name Field -->
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
+            <div class="invalid-feedback">Name is required and should contain only letters and spaces.</div>
+        </div>
+        
+        <!-- Email Field -->
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+            <div class="invalid-feedback">Please enter a valid email address.</div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter a password" required>
+            <div class="invalid-feedback">Password is required and must be at least 8 characters long.</div>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+            <div class="invalid-feedback">Passwords must match.</div>
+        </div>
+
+        <!-- Date of Birth Field -->
+        <div class="form-group">
+            <label for="dob">Date of Birth</label>
+            <input type="date" class="form-control" id="dob" required>
+            <div class="invalid-feedback">Please select a valid date of birth.</div>
+        </div>
+
+        <!-- Marks Field -->
+        <div class="form-group">
+            <label for="marks">Marks</label>
+            <input type="number" class="form-control" id="marks" placeholder="Enter marks (0-100)" min="0" max="100" required>
+            <div class="invalid-feedback">Please enter marks between 0 and 100.</div>
+        </div>
+
+        <!-- Gender Field -->
+        <div class="form-group">
+            <label>Gender</label><br>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" id="genderMale" value="Male" required>
+                <label class="form-check-label" for="genderMale">Male</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="Female">
+                <label class="form-check-label" for="genderFemale">Female</label>
+            </div>
+            <div class="invalid-feedback">Please select your gender.</div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // JavaScript for form validation
+    document.getElementById('validationForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting
+
+        // Get all form elements
+        let form = this;
+        let isValid = true;
+
+        // Name validation (letters and spaces only)
+        let name = document.getElementById('name');
+        if (!name.value.match(/^[A-Za-z\s]+$/)) {
+            name.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            name.classList.remove('is-invalid');
+            name.classList.add('is-valid');
+        }
+
+        // Email validation (basic pattern matching)
+        let email = document.getElementById('email');
+        if (!email.value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/)) {
+            email.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            email.classList.remove('is-invalid');
+            email.classList.add('is-valid');
+        }
+
+        // Password validation (min length 8)
+        let password = document.getElementById('password');
+        if (password.value.length < 8) {
+            password.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            password.classList.remove('is-invalid');
+            password.classList.add('is-valid');
+        }
+
+        // Confirm password validation (must match password)
+        let confirmPassword = document.getElementById('confirmPassword');
+        if (confirmPassword.value !== password.value) {
+            confirmPassword.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            confirmPassword.classList.remove('is-invalid');
+            confirmPassword.classList.add('is-valid');
+        }
+
+        // Date of birth validation (must be a valid date)
+        let dob = document.getElementById('dob');
+        if (!dob.value) {
+            dob.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            dob.classList.remove('is-invalid');
+            dob.classList.add('is-valid');
+        }
+
+        // Marks validation (between 0 and 100)
+        let marks = document.getElementById('marks');
+        if (marks.value < 0 || marks.value > 100) {
+            marks.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            marks.classList.remove('is-invalid');
+            marks.classList.add('is-valid');
+        }
+
+        // Gender validation (at least one radio button must be selected)
+        let genderMale = document.getElementById('genderMale');
+        let genderFemale = document.getElementById('genderFemale');
+        if (!genderMale.checked && !genderFemale.checked) {
+            genderMale.classList.add('is-invalid');
+            genderFemale.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            genderMale.classList.remove('is-invalid');
+            genderFemale.classList.remove('is-invalid');
+            genderMale.classList.add('is-valid');
+            genderFemale.classList.add('is-valid');
+        }
+
+        // If the form is valid, submit the form
+        if (isValid) {
+            alert('Form submitted successfully!');
+            form.reset(); // Reset form after successful submission
+        }
+    });
+</script>
+
+</body>
+</html>
